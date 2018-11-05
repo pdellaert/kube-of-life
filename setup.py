@@ -32,7 +32,7 @@ except ImportError:
 
 setup(
     name='kubeoflife',
-    version='0.1.0',
+    version='0.2.0',
     description='A Game of Life implementation using Kubernetes pods as cells',
     url='https://github.com/pdellaer/kube-of-life',
     author='Philippe Dellaert',

@@ -47,9 +47,12 @@ class GameOfLife(threading.Thread):
         elif self.config.get('GOF', 'initiation') == 'FILE':
             self.import_grid()
         
-        config.load_kube_config()
+        if self.config.get('K8S', 'kubeconfig') == 'YES':
+            config.load_kube_config()
         self.create_ns()
         self.execute_k8s_actions()
+        if self.config.get('K8S', 'wait_for_pods') == 'YES':
+            self.wait_for_pods()
         self.set_output()
 
         for step in range(int(self.config.get('GOF', 'steps'))):
@@ -79,6 +82,8 @@ class GameOfLife(threading.Thread):
                         self.new_gof_pods[i][j] = False
             logging.info("GOF - {0} - Configuring pods".format(step))
             self.execute_k8s_actions()
+            if self.config.get('K8S', 'wait_for_pods') == 'YES':
+                self.wait_for_pods()
             logging.info("GOF - {0} - Updating output".format(step))
             self.set_output()
             self.old_gof_pods = copy.deepcopy(self.new_gof_pods)
@@ -98,7 +103,7 @@ class GameOfLife(threading.Thread):
         return live_neighbors
 
     def execute_k8s_actions(self):
-        logging.debug("GOF - Starting K8s actions")
+        logging.info("GOF - Starting K8s actions")
         for i in range(len(self.new_gof_pods)):
             for j in range(len(self.new_gof_pods[i])):
                 if self.old_gof_pods[i][j] and not self.new_gof_pods[i][j]:
@@ -129,6 +134,7 @@ class GameOfLife(threading.Thread):
                     self.new_gof_pods[i][j] = True if grid[i][j] == "#" else False
 
     def set_output(self):
+        logging.info("GOF - Handling output for Flask thread")
         output = []
         for i in range(len(self.new_gof_pods)):
             for j in range(len(self.new_gof_pods[i])):
@@ -176,4 +182,18 @@ class GameOfLife(threading.Thread):
         pods = pod_client.list_namespaced_pod(namespace="game-of-life", field_selector="metadata.name={0:s}".format(name)).items
         if len(pods) == 1:
             logging.info("GOF - Pod named {0:s} found, deleting it".format(name))
-            pod_client.delete_namespaced_pod(namespace="game-of-life", name=name, body=pods[0])
+            pod_client.delete_namespaced_pod(namespace="game-of-life", name=name, body=pods[0], grace_period_seconds=int(round(int(self.config.get('GOF', 'wait'))/2, 0)+1))
+
+    def wait_for_pods(self):
+        pod_client = client.CoreV1Api()
+        stabilized = False
+        logging.info("GOF - Waiting for the pods to stabilize")
+        while not stabilized:
+            time.sleep(1)
+            pods = pod_client.list_namespaced_pod(namespace="game-of-life").items
+            running_pods = pod_client.list_namespaced_pod(namespace="game-of-life", field_selector="status.phase=Running").items
+            pending_pods = pod_client.list_namespaced_pod(namespace="game-of-life", field_selector="status.phase=Pending").items
+            if len(pods) == len(running_pods) and len(pending_pods) == 0:
+                stabilized = True
+            else:
+                logging.debug("GOF - {0} pods, {1} running pods, {2} pending pods".format(len(pods), len(running_pods), len(pending_pods)))
