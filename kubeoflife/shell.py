@@ -81,7 +81,7 @@ class KubeOfLife(object):
         logger.debug('Arguments: {0}'.format(args))
 
         backend = GameOfLife(config=cfg)
-        frontend = API(config=config)
+        frontend = API(config=cfg)
         backend.start()
         frontend.start()
         backend.join()
