@@ -30,8 +30,9 @@ from flask import Flask, render_template, jsonify
 from kubeoflife.common import utils
 
 class API(threading.Thread):
-    def __init__(self):
+    def __init__(self, config):
         threading.Thread.__init__(self)
+        self.config = config
 
     def run(self):
         app = Flask(__name__)
@@ -51,4 +52,12 @@ class API(threading.Thread):
             utils.THREAD_CONDITION.release()
             return jsonify(output)
         
-        app.run()
+        @app.route('/config')
+        def config():
+            config = {
+                "grid_size": self.config.get('GOL', 'size'),
+                "step_wait": self.config.get('GOL', 'wait'),
+            }
+            return jsonify(config)
+        
+        app.run(host='0.0.0.0')
