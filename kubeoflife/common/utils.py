@@ -47,7 +47,8 @@ def default_config():
     cfg.set('LOG', 'file', '')
     cfg.set('LOG', 'level', 'DEBUG')
     cfg.add_section('GOL')
-    cfg.set('GOL', 'size', '10')
+    cfg.set('GOL', 'size_x', '10')
+    cfg.set('GOL', 'size_y', '10')
     cfg.set('GOL', 'wait', '10')
     cfg.set('GOL', 'steps', '20')
     cfg.set('GOL', 'initiation', 'RANDOM')
@@ -77,7 +78,8 @@ def parse_config(config_file):
             not cfg.has_option('LOG', 'level'):
         print('Missing options in the LOG section of configuration file {0:s}, please check the configuration'.format(config_file))
         sys.exit(1)
-    if not cfg.has_option('GOL', 'size') or \
+    if not cfg.has_option('GOL', 'size_x') or \
+            not cfg.has_option('GOL', 'size_y') or \
             not cfg.has_option('GOL', 'wait') or \
             not (cfg.has_option('GOL', 'initiation') and cfg.get('GOL', 'initiation') in ['RANDOM', 'FILE']) or \
             not cfg.has_option('GOL', 'gridfile') or \

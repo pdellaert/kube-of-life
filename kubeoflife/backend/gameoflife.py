@@ -37,7 +37,7 @@ class GameOfLife(threading.Thread):
     def __init__(self, config):
         threading.Thread.__init__(self)
         self.config = config
-        self.old_gof_pods = [[False for i in range(int(self.config.get('GOL', 'size')))] for k in range(int(self.config.get('GOL', 'size')))]
+        self.old_gof_pods = [[False for i in range(int(self.config.get('GOL', 'size_y')))] for k in range(int(self.config.get('GOL', 'size_x')))]
         self.new_gof_pods = copy.deepcopy(self.old_gof_pods)
 
     def run(self):
@@ -59,7 +59,7 @@ class GameOfLife(threading.Thread):
             time.sleep(int(self.config.get('GOL', 'wait')))
             # run game logic
             self.old_gof_pods = self.new_gof_pods.copy()
-            self.new_gof_pods = [[False for i in range(int(self.config.get('GOL', 'size')))] for k in range(int(self.config.get('GOL', 'size')))]
+            self.new_gof_pods = [[False for i in range(int(self.config.get('GOL', 'size_y')))] for k in range(int(self.config.get('GOL', 'size_x')))]
             for i in range(len(self.new_gof_pods)):
                 for j in range(len(self.new_gof_pods[i])):
                     live_neighbors = self.get_live_neighbors(x=i, y=j)
@@ -91,10 +91,10 @@ class GameOfLife(threading.Thread):
     def get_live_neighbors(self, x, y):
         live_neighbors = 0
         for i in [x-1, x, x+1]:
-            if i < 0 or i >= int(self.config.get('GOL', 'size')):
+            if i < 0 or i >= int(self.config.get('GOL', 'size_x')):
                 continue
             for j in [y-1, y, y+1]:
-                if j < 0 or j >= int(self.config.get('GOL', 'size')):
+                if j < 0 or j >= int(self.config.get('GOL', 'size_y')):
                     continue
                 elif i == x and j == y:
                     continue
