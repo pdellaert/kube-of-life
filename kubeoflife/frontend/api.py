@@ -55,7 +55,8 @@ class API(threading.Thread):
         @app.route('/config')
         def config():
             config = {
-                "grid_size": self.config.get('GOL', 'size'),
+                "grid_size_x": self.config.get('GOL', 'size_x'),
+                "grid_size_y": self.config.get('GOL', 'size_y'),
                 "step_wait": self.config.get('GOL', 'wait'),
             }
             return jsonify(config)
