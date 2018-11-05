@@ -182,7 +182,7 @@ class GameOfLife(threading.Thread):
         pods = pod_client.list_namespaced_pod(namespace="game-of-life", field_selector="metadata.name={0:s}".format(name)).items
         if len(pods) == 1:
             logging.info("GOF - Pod named {0:s} found, deleting it".format(name))
-            pod_client.delete_namespaced_pod(namespace="game-of-life", name=name, body=pods[0], grace_period_seconds=int(round(int(self.config.get('GOF', 'wait'))/2, 0)+1))
+            pod_client.delete_namespaced_pod(namespace="game-of-life", name=name, body=pods[0], grace_period_seconds=0)
 
     def wait_for_pods(self):
         pod_client = client.CoreV1Api()
