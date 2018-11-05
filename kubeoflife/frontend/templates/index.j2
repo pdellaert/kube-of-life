@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+    border: 1px white solid;
+}
+td {
+    width: 10px;
+    height: 10px;
+}
+</style>
+</head>
+<body>
+<table cellspacing=0 cellpadding=0>
+{% for i in output %}
+    <tr>
+{% for j in i %}
+        <td bgcolor="{% if j %}green{% else %}silver{%endif%}"></td>
+{% endfor %}
+{% endfor %}
+</table>
+</body>
+</html>
