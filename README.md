@@ -17,6 +17,7 @@ In the second iteration, the God gives more power to life itself, it builds in m
 In the third and final iteration, the God has found a stable solution for life, it decides to give control over reproduction and allows cells to create new cells. The God is now only responsible for kicking off the eco-system and watching it, death and life is now the responsibility of the cells.
 
 * **Phase 1**
+
   Single God script that performces all of the functionality:
   * Builds the Game of Life grid.
   * Populates it with the cells, random or through import of a grid pattern file.
@@ -27,14 +28,17 @@ In the third and final iteration, the God has found a stable solution for life, 
   Phase 1 was implemented early November 2018 for the VMworld EU Hackathon.
 
 * **Phase 1.5**
+
   Take the Phase 1 script and allow it to actually run itself as a pod on K8s, using a service account.
 
 * **Phase 2**
+
   * Make each K8s cell pod itself aware of its neighbors in the grid, and decide wether or not it stays alive or dies.
   * The God pod would only be responsible of creating new cells/pods, and no longer control death.
   * God pod still provides full view of the grid and the API endpoint.
 
 * **Phase 3**
+
   * Make existing K8s cell pods be responsible of creating new life cells, taking away that responsibility from the God pod.
   * The God pod now only becomes responsible for kicking of the grid and the initial life and reporting on the evolution of life
 
